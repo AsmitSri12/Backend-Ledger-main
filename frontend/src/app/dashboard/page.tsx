@@ -23,7 +23,7 @@ export default function DashboardPage() {
     }
   }, [hasFetched, isAuthenticated, router]);
 
-  useEffect(() => {
+useEffect(() => {
     let isMounted = true;
     let cancelled = false;
     
@@ -34,10 +34,10 @@ export default function DashboardPage() {
         if (!cancelled && isMounted) {
           setAccounts(response.data.accounts as Account[]);
         }
-      } catch (error: any) {
+      } catch (error: unknown) {
         if (!cancelled && isMounted) {
-          // Handle 401 - redirect to login
-          if (error.response?.status === 401) {
+          const err = error as { response?: { status?: number } };
+          if (err.response?.status === 401) {
             cancelled = true;
             router.replace('/login');
             return;
@@ -58,7 +58,7 @@ export default function DashboardPage() {
       isMounted = false;
       cancelled = true;
     };
-  }, [router]);
+  }, [router, setAccounts]);
 
   const handleCreateAccount = async () => {
     try {

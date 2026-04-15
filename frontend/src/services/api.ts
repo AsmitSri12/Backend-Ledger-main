@@ -6,11 +6,13 @@ let storedAuth: { state?: { token?: string } } = {};
 if (typeof window !== 'undefined') {
   try {
     storedAuth = JSON.parse(localStorage.getItem('auth-storage') || '{}');
-  } catch (e) {}
+  } catch {
+    // Ignore parse errors
+  }
 }
 
 const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api',
+  baseURL: process.env.NEXT_PUBLIC_API_URL || '/api',
   withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
