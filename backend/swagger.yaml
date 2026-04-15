@@ -1,0 +1,131 @@
+openapi: 3.0.0
+info:
+  title: Backend Ledger API
+  version: 1.0.0
+  description: API documentation for the Financial Ledger & Transaction Management System
+servers:
+  - url: http://localhost:3000
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+security:
+  - bearerAuth: []
+
+paths:
+  /api/auth/register:
+    post:
+      summary: Register a new user
+      tags: [Auth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, name, password]
+              properties:
+                email:
+                  type: string
+                name:
+                  type: string
+                password:
+                  type: string
+      responses:
+        "201":
+          description: User registered successfully
+        "400":
+          description: Validation error
+        "422":
+          description: User already exists
+
+  /api/auth/login:
+    post:
+      summary: Login user
+      tags: [Auth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        "200":
+          description: User logged in successfully
+        "401":
+          description: Invalid credentials
+  
+  /api/accounts:
+    post:
+      summary: Create a new account for the logged-in user
+      tags: [Account]
+      security:
+        - bearerAuth: []
+      responses:
+        "201":
+          description: Account created successfully
+
+    get:
+      summary: Get all accounts of the logged-in user
+      tags: [Account]
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: List of accounts
+
+  /api/accounts/balance/{accountId}:
+    get:
+      summary: Get account balance
+      tags: [Account]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: accountId
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Account balance
+
+  /api/transactions:
+    post:
+      summary: Create a new transaction
+      tags: [Transaction]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [fromAccount, toAccount, amount, idempotencyKey]
+              properties:
+                fromAccount:
+                  type: string
+                toAccount:
+                  type: string
+                amount:
+                  type: number
+                idempotencyKey:
+                  type: string
+      responses:
+        "201":
+          description: Transaction completed successfully
+        "202":
+          description: Transaction is still processing
+        "400":
+          description: Bad request or insufficient balance
