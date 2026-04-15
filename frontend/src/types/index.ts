@@ -8,7 +8,7 @@ export interface User {
 export interface Account {
   _id: string;
   user: string;
-  status: 'ACTIVE' | 'INACTIVE';
+  status: string;
   currency: string;
   balance?: number;
 }
@@ -36,5 +36,10 @@ export interface ErrorResponse {
   error?: {
     statusCode: number;
     status: string;
+  };
+  response?: {
+    data?: {
+      message?: string;
+    };
   };
 }

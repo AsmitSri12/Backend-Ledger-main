@@ -3,21 +3,16 @@
 import { useEffect, useState } from 'react';
 import api from '@/services/api';
 import Navbar from '@/components/layout/Navbar';
-import { z } from 'zod';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
 import Input from '@/components/ui/Input';
 import { useAccountStore } from '@/store/accountStore';
 import { Transaction, Account, ErrorResponse } from '@/types';
 
-const transactionSchema = z.object({
-  fromAccount: z.string().min(1, 'From account is required'),
-  toAccount: z.string().min(1, 'To account is required'),
-  amount: z.coerce.number().positive('Amount must be positive'),
-  idempotencyKey: z.string().default(() => Math.random().toString(36).substring(7)),
-});
-
-type TransactionFormValues = z.infer<typeof transactionSchema>;
+type TransactionFormValues = {
+  fromAccount: string;
+  toAccount: string;
+  amount: number;
+  idempotencyKey: string;
+};
 
 export default function TransactionsPage() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -25,15 +20,11 @@ export default function TransactionsPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [serverError, setServerError] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
+  const [fromAccount, setFromAccount] = useState('');
+  const [toAccount, setToAccount] = useState('');
+  const [amount, setAmount] = useState('');
   
   const { accounts } = useAccountStore();
-
-  const { register, handleSubmit, reset, formState: { errors }, setValue } = useForm<TransactionFormValues>({
-    resolver: zodResolver(transactionSchema),
-    defaultValues: {
-      idempotencyKey: Math.random().toString(36).substring(7)
-    }
-  });
 
   const fetchTransactions = async () => {
     try {
@@ -50,15 +41,28 @@ export default function TransactionsPage() {
     fetchTransactions();
   }, []);
 
-  const onSubmit = async (data: TransactionFormValues) => {
+  const onSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!fromAccount || !toAccount || !amount) {
+      setServerError('All fields are required');
+      return;
+    }
+
     try {
       setIsSubmitting(true);
       setServerError('');
       setSuccessMsg('');
-      await api.post('/transactions', data);
+      await api.post('/transactions', {
+        fromAccount,
+        toAccount,
+        amount: parseFloat(amount),
+        idempotencyKey: Math.random().toString(36).substring(7),
+      });
       setSuccessMsg('Transaction completed successfully!');
-      reset();
-      setValue('idempotencyKey', Math.random().toString(36).substring(7));
+      setFromAccount('');
+      setToAccount('');
+      setAmount('');
       fetchTransactions();
     } catch (error) {
       const err = error as ErrorResponse;
@@ -82,14 +86,15 @@ export default function TransactionsPage() {
           <div className="lg:col-span-1">
             <div className="bg-white p-6 shadow rounded-lg">
               <h2 className="text-lg font-medium text-gray-900 mb-4">New Transaction</h2>
-              <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+              <form onSubmit={onSubmit} className="space-y-4">
                 {serverError && <div className="text-red-500 text-sm bg-red-50 p-2 rounded">{serverError}</div>}
                 {successMsg && <div className="text-green-600 text-sm bg-green-50 p-2 rounded">{successMsg}</div>}
                 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">From Account</label>
                   <select
-                    {...register('fromAccount')}
+                    value={fromAccount}
+                    onChange={(e) => setFromAccount(e.target.value)}
                     className="w-full px-3 py-2 border rounded-md shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 border-gray-300"
                   >
                     <option value="">Select Account</option>
@@ -97,26 +102,23 @@ export default function TransactionsPage() {
                       <option key={acc._id} value={acc._id}>{acc._id} ({acc.currency})</option>
                     ))}
                   </select>
-                  {errors.fromAccount && <p className="mt-1 text-sm text-red-500">{errors.fromAccount.message}</p>}
                 </div>
 
                 <Input
                   label="To Account ID"
                   type="text"
                   placeholder="Paste Recipient Account ID"
-                  {...register('toAccount')}
-                  error={errors.toAccount?.message}
+                  value={toAccount}
+                  onChange={(e) => setToAccount(e.target.value)}
                 />
 
                 <Input
                   label="Amount"
                   type="number"
                   step="0.01"
-                  {...register('amount')}
-                  error={errors.amount?.message}
+                  value={amount}
+                  onChange={(e) => setAmount(e.target.value)}
                 />
-
-                <input type="hidden" {...register('idempotencyKey')} />
 
                 <button
                   type="submit"
