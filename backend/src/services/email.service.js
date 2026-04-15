@@ -1,9 +1,10 @@
 const { Resend } = require("resend");
+require("dotenv").config();
 const fs = require("fs");
 const path = require("path");
 const handlebars = require("handlebars");
 
-const resend = new Resend("re_NSa81nqz_FrhcX3otHLGUxy9LsQnUek2n");
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 const compileTemplate = (templateName, data) => {
   const filePath = path.join(__dirname, "../templates", `${templateName}.hbs`);
