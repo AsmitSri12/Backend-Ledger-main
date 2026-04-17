@@ -108,8 +108,15 @@ async function createTransaction(req, res) {
     /**
      * Create transaction (PENDING)
      */
-    const session = await mongoose.startSession();
-    session.startTransaction();
+    let session = null;
+    if (global.supportsTransactions !== false) {
+      try {
+        session = await mongoose.startSession();
+        session.startTransaction();
+      } catch (e) {
+        session = null;
+      }
+    }
 
     transaction = (
       await transactionModel.create(
@@ -122,11 +129,11 @@ async function createTransaction(req, res) {
             status: "PENDING",
           },
         ],
-        { session },
+        session ? { session } : {},
       )
     )[0];
 
-    const debitLedgerEntry = await ledgerModel.create(
+    await ledgerModel.create(
       [
         {
           account: fromAccount,
@@ -135,12 +142,8 @@ async function createTransaction(req, res) {
           type: "DEBIT",
         },
       ],
-      { session },
+      session ? { session } : {},
     );
-
-    await (() => {
-      return new Promise((resolve) => setTimeout(resolve, 15 * 1000));
-    })();
 
     const creditLedgerEntry = await ledgerModel.create(
       [
@@ -151,17 +154,19 @@ async function createTransaction(req, res) {
           type: "CREDIT",
         },
       ],
-      { session },
+      session ? { session } : {},
     );
 
     await transactionModel.findOneAndUpdate(
       { _id: transaction._id },
       { status: "COMPLETED" },
-      { session },
+      session ? { session } : {},
     );
 
-    await session.commitTransaction();
-    session.endSession();
+    if (session) {
+      await session.commitTransaction();
+      session.endSession();
+    }
   } catch (error) {
     return res.status(400).json({
       message:
@@ -212,8 +217,15 @@ async function createInitialFundsTransaction(req, res) {
     });
   }
 
-  const session = await mongoose.startSession();
-  session.startTransaction();
+  let session = null;
+  if (global.supportsTransactions !== false) {
+    try {
+      session = await mongoose.startSession();
+      session.startTransaction();
+    } catch (e) {
+      session = null;
+    }
+  }
 
   const [transaction] = await transactionModel.create(
     [
@@ -225,10 +237,10 @@ async function createInitialFundsTransaction(req, res) {
         status: "PENDING",
       },
     ],
-    { session },
+    session ? { session } : {},
   );
 
-  const debitLedgerEntry = await ledgerModel.create(
+  await ledgerModel.create(
     [
       {
         account: fromUserAccount._id,
@@ -237,10 +249,10 @@ async function createInitialFundsTransaction(req, res) {
         type: "DEBIT",
       },
     ],
-    { session },
+    session ? { session } : {},
   );
 
-  const creditLedgerEntry = await ledgerModel.create(
+  await ledgerModel.create(
     [
       {
         account: toAccount,
@@ -249,14 +261,16 @@ async function createInitialFundsTransaction(req, res) {
         type: "CREDIT",
       },
     ],
-    { session },
+    session ? { session } : {},
   );
 
   transaction.status = "COMPLETED";
-  await transaction.save({ session });
+  await transaction.save(session ? { session } : {});
 
-  await session.commitTransaction();
-  session.endSession();
+  if (session) {
+    await session.commitTransaction();
+    session.endSession();
+  }
 
   return res.status(201).json({
     message: "Initial funds transaction completed successfully",

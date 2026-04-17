@@ -23,7 +23,7 @@ const transactionSchema = new mongoose.Schema({
   },
   amount: {
     type: Number,
-    required: "Account is required for creating a transaction",
+    required: [true, "Amount is required for creating a transaction"],
     min: [0, "Transaction amount cannot be negative"]
   },
   idempotencyKey: {
