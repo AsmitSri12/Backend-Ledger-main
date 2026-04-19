@@ -95,7 +95,7 @@ export default function TransactionsPage() {
                   <select
                     value={fromAccount}
                     onChange={(e) => setFromAccount(e.target.value)}
-                    className="w-full px-3 py-2 border rounded-md shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 border-gray-300"
+                    className="w-full px-3 py-2 border rounded-md shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 border-gray-300 text-gray-900"
                   >
                     <option value="">Select Account</option>
                     {accounts.filter((a: Account) => a.status === 'ACTIVE').map((acc: Account) => (
