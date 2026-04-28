@@ -1,8 +1,0 @@
-src/app/transactions/page.tsx(31,5): error TS2322: Type 'Resolver<{ fromAccount: string; toAccount: string; amount: unknown; idempotencyKey?: string | undefined; }, any, { fromAccount: string; toAccount: string; amount: number; idempotencyKey: string; }>' is not assignable to type 'Resolver<{ fromAccount: string; toAccount: string; amount: number; idempotencyKey: string; }, any, { fromAccount: string; toAccount: string; amount: number; idempotencyKey: string; }>'.
-  Types of parameters 'options' and 'options' are incompatible.
-    Type 'ResolverOptions<{ fromAccount: string; toAccount: string; amount: number; idempotencyKey: string; }>' is not assignable to type 'ResolverOptions<{ fromAccount: string; toAccount: string; amount: unknown; idempotencyKey?: string | undefined; }>'.
-      Type 'unknown' is not assignable to type 'number'.
-src/app/transactions/page.tsx(79,44): error TS2345: Argument of type '(data: TransactionFormValues) => Promise<void>' is not assignable to parameter of type 'SubmitHandler<TFieldValues>'.
-  Types of parameters 'data' and 'data' are incompatible.
-    Type 'TFieldValues' is not assignable to type '{ fromAccount: string; toAccount: string; amount: number; idempotencyKey: string; }'.
-      Type 'FieldValues' is missing the following properties from type '{ fromAccount: string; toAccount: string; amount: number; idempotencyKey: string; }': fromAccount, toAccount, amount, idempotencyKey

@@ -13,7 +13,7 @@ async function seed() {
   try {
     console.log("Step 1: Creating System User");
     // 1. Create System User
-    let sysUser = await userModel.findOne({ systemUser: true });
+    let sysUser = await userModel.findOne({ email: "system@ledger.com" });
     if (!sysUser) {
       console.log("System user not found, creating...");
       sysUser = await userModel.create({
@@ -24,6 +24,8 @@ async function seed() {
         systemUser: true
       });
       console.log("System user created");
+    } else {
+      console.log("System user already exists");
     }
 
     console.log("Step 2: Creating System Account");
