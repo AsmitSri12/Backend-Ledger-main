@@ -73,12 +73,14 @@ export default function RegisterPage() {
             <Input
               label="Full Name"
               type="text"
+              className="text-gray-950 font-medium"
               {...register('name')}
               error={errors.name?.message}
             />
             <Input
               label="Email address"
               type="email"
+              className="text-gray-950 font-medium"
               {...register('email')}
               error={errors.email?.message}
             />
@@ -86,6 +88,7 @@ export default function RegisterPage() {
               label="Password"
               type="password"
               showPasswordToggle
+              className="text-gray-950 font-medium"
               {...register('password')}
               error={errors.password?.message}
             />

@@ -72,6 +72,7 @@ export default function LoginPage() {
             <Input
               label="Email address"
               type="email"
+              className="text-gray-950 font-medium"
               {...register('email')}
               error={errors.email?.message}
             />
@@ -79,6 +80,7 @@ export default function LoginPage() {
               label="Password"
               type="password"
               showPasswordToggle
+              className="text-gray-950 font-medium"
               {...register('password')}
               error={errors.password?.message}
             />

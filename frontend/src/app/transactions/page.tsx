@@ -91,11 +91,11 @@ export default function TransactionsPage() {
                 {successMsg && <div className="text-green-600 text-sm bg-green-50 p-2 rounded">{successMsg}</div>}
                 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">From Account</label>
+                  <label className="block text-sm font-bold text-gray-900 mb-1">From Account</label>
                   <select
                     value={fromAccount}
                     onChange={(e) => setFromAccount(e.target.value)}
-                    className="w-full px-3 py-2 border rounded-md shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 border-gray-300 text-gray-900"
+                    className="w-full px-3 py-2 border border-gray-500 rounded-md shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-950 font-medium"
                   >
                     <option value="">Select Account</option>
                     {accounts.filter((a: Account) => a.status === 'ACTIVE').map((acc: Account) => (
@@ -108,6 +108,7 @@ export default function TransactionsPage() {
                   label="To Account ID"
                   type="text"
                   placeholder="Paste Recipient Account ID"
+                  className="text-gray-950 font-medium"
                   value={toAccount}
                   onChange={(e) => setToAccount(e.target.value)}
                 />
@@ -116,6 +117,7 @@ export default function TransactionsPage() {
                   label="Amount"
                   type="number"
                   step="0.01"
+                  className="text-gray-950 font-medium"
                   value={amount}
                   onChange={(e) => setAmount(e.target.value)}
                 />
