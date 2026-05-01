@@ -17,8 +17,8 @@
 
 ## Testing Credentials
 
-Email- test-admin@ledger.com
-Password- password123
+- Email- test-admin@ledger.com
+- Password- password123
 
 Note- Please don't delete the Account. Use it for transaction testing only. 
 
