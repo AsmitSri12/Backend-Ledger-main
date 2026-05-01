@@ -15,6 +15,13 @@
 
 **[https://backend-ledger-main-cyvs.vercel.app](https://backend-ledger-main-cyvs.vercel.app)**
 
+## Testing Credentials
+
+Email- test-admin@ledger.com
+Password- password123
+
+Note- Please don't delete the Account. Use it for transaction testing only. 
+
 ## Features
 
 - 🔐 **JWT Authentication** - Secure user registration & login with JSON Web Tokens
